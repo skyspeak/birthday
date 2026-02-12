@@ -21,21 +21,27 @@
 
 3. **Initialize Database Schema:**
    
-   After the database is created, you need to push the schema and seed the data.
+   After the database is created, you need to create the schema and seed the data.
    
-   **Option A: Using Vercel CLI (Recommended)**
+   **Step 3a: Create Tables**
+   
+   Go to Vercel Dashboard → Storage → Your Database → Query tab
+   
+   Copy and paste the entire contents of `prisma/init.sql` into the query box and click "Run".
+   
+   This will create the `Invitee` table with all required columns.
+   
+   **Step 3b: Seed the Database**
    
    ```bash
-   # Install Vercel CLI
-   npx vercel
-   
-   # Push database schema
+   # Pull environment variables from Vercel
    npx vercel env pull .env.local
-   npx prisma db push
    
-   # Seed the database
+   # Seed the database (will connect to Vercel Postgres)
    npx tsx prisma/seed.ts
    ```
+   
+   This will populate your database with all 16 invitees and their preset max kids counts.
    
    **Option B: Using Vercel Dashboard**
    
