@@ -1,23 +1,55 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { eventConfig } from "@/lib/config";
 import Carousel from "@/components/Carousel";
 import WaveDivider from "@/components/WaveDivider";
 import LocationBanner from "@/components/LocationBanner";
 import CastleGateOpening from "@/components/CastleGateOpening";
 
-export default function RSVPPage() {
+function RSVPContent() {
+  const searchParams = useSearchParams();
   const [showContent, setShowContent] = useState(false);
   const [guestName, setGuestName] = useState("");
   const [isAttending, setIsAttending] = useState<boolean | null>(null);
   const [adultsCount, setAdultsCount] = useState(1);
   const [kidsCount, setKidsCount] = useState(0);
+  const [maxKidsCount, setMaxKidsCount] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  // Read URL parameters and fetch invitee data on component mount
+  useEffect(() => {
+    const name = searchParams.get("name");
+    
+    if (name) {
+      const decodedName = decodeURIComponent(name);
+      setGuestName(decodedName);
+      
+      // Fetch invitee data from database
+      fetch(`/api/invitees/${encodeURIComponent(decodedName)}`)
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          }
+          // If invitee doesn't exist yet, that's okay - they can still RSVP
+          return null;
+        })
+        .then(data => {
+          if (data && data.maxKidsCount !== null && data.maxKidsCount !== undefined) {
+            setMaxKidsCount(data.maxKidsCount);
+            setKidsCount(data.maxKidsCount); // Start at max allowed
+          }
+        })
+        .catch(err => {
+          console.error("Failed to fetch invitee data:", err);
+        });
+    }
+  }, [searchParams]);
 
   const handleSubmit = async () => {
     if (!guestName.trim()) {
@@ -203,7 +235,10 @@ export default function RSVPPage() {
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full rounded-2xl border border-lavender/20 bg-white/50 px-4 py-3 text-sm md:text-base text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:ring-2 focus:ring-lavender/30 focus:border-lavender/40 transition-all touch-manipulation"
+                    readOnly={!!searchParams.get("name")}
+                    className={`w-full rounded-2xl border border-lavender/20 bg-white/50 px-4 py-3 text-sm md:text-base text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:ring-2 focus:ring-lavender/30 focus:border-lavender/40 transition-all touch-manipulation ${
+                      searchParams.get("name") ? "cursor-not-allowed opacity-70" : ""
+                    }`}
                   />
                 </div>
 
@@ -280,8 +315,13 @@ export default function RSVPPage() {
                             {kidsCount}
                           </span>
                           <button
-                            onClick={() => setKidsCount(Math.min(10, kidsCount + 1))}
-                            className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-seafoam/10 text-seafoam hover:bg-seafoam/20 active:scale-90 flex items-center justify-center transition-all text-lg md:text-xl touch-manipulation"
+                            onClick={() => setKidsCount(Math.min(maxKidsCount ?? 10, kidsCount + 1))}
+                            disabled={maxKidsCount !== null && kidsCount >= maxKidsCount}
+                            className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center transition-all text-lg md:text-xl touch-manipulation ${
+                              maxKidsCount !== null && kidsCount >= maxKidsCount
+                                ? "bg-gray-100 text-gray-300 cursor-not-allowed"
+                                : "bg-seafoam/10 text-seafoam hover:bg-seafoam/20 active:scale-90"
+                            }`}
                           >
                             +
                           </button>
@@ -372,5 +412,17 @@ export default function RSVPPage() {
         </main>
       )}
     </>
+  );
+}
+
+export default function RSVPPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-charcoal/50">Loading...</div>
+      </div>
+    }>
+      <RSVPContent />
+    </Suspense>
   );
 }

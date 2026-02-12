@@ -1,77 +1,66 @@
-import { PrismaClient } from "../src/generated/prisma/client.js";
+import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import path from "path";
-import { fileURLToPath } from "url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, "dev.db");
-
+const dbPath = path.join(process.cwd(), "prisma", "dev.db");
 const adapter = new PrismaBetterSqlite3({
   url: `file:${dbPath}`,
 });
 const prisma = new PrismaClient({ adapter });
 
-// =============================================
-// ADD YOUR GUEST NAMES HERE (Optional)
-// =============================================
-// Note: Guests can also RSVP directly at /rsvp without being pre-added
-const guests = [
-  "Alice Johnson",
-  "Bob & Maria Smith",
-  "The Garcia Family",
-  "Emma Wilson",
-  "The Andersons",
-];
-
 async function main() {
-  console.log("\n🧜‍♀️🦄 Birthday Party RSVP Manager\n");
+  console.log("🌱 Seeding database with invitees...");
 
-  if (guests.length > 0) {
-    console.log("Pre-adding guests to the database...\n");
+  const invitees = [
+    { name: "Samuel & Miriam", maxKidsCount: 2 },
+    { name: "Khai and Liem", maxKidsCount: 2 },
+    { name: "Adam & Kelley", maxKidsCount: 2 },
+    { name: "Cody & Annie", maxKidsCount: 2 },
+    { name: "Niko", maxKidsCount: 1 },
+    { name: "Lennon", maxKidsCount: 1 },
+    { name: "Mila", maxKidsCount: 1 },
+    { name: "Nyla", maxKidsCount: 1 },
+    { name: "Sydney", maxKidsCount: 1 },
+    { name: "Xenia", maxKidsCount: 1 },
+    { name: "Summer", maxKidsCount: 1 },
+    { name: "Maya", maxKidsCount: 1 },
+    { name: "Aria", maxKidsCount: 1 },
+    { name: "Celine", maxKidsCount: 1 },
+    { name: "Leili", maxKidsCount: 1 },
+    { name: "Clara", maxKidsCount: 1 },
+  ];
 
-    for (const name of guests) {
-      const existing = await prisma.invitee.findFirst({
-        where: { name },
+  for (const invitee of invitees) {
+    const existing = await prisma.invitee.findFirst({
+      where: { name: invitee.name },
+    });
+
+    if (existing) {
+      // Update existing invitee to set maxKidsCount if not already set
+      await prisma.invitee.update({
+        where: { id: existing.id },
+        data: { maxKidsCount: invitee.maxKidsCount },
       });
-
-      if (existing) {
-        console.log(`  ⏭  "${name}" already exists, skipping.`);
-      } else {
-        await prisma.invitee.create({
-          data: { name },
-        });
-        console.log(`  ✅ Created "${name}"`);
-      }
+      console.log(`✅ Updated: ${invitee.name} (max ${invitee.maxKidsCount} kids)`);
+    } else {
+      // Create new invitee
+      await prisma.invitee.create({
+        data: {
+          name: invitee.name,
+          maxKidsCount: invitee.maxKidsCount,
+        },
+      });
+      console.log(`✨ Created: ${invitee.name} (max ${invitee.maxKidsCount} kids)`);
     }
   }
 
-  console.log("\n─────────────────────────────────────────────────");
-  console.log("  RSVP Link:");
-  console.log("─────────────────────────────────────────────────\n");
-  console.log("  Share this link with all your guests:\n");
-  console.log("  🔗 http://localhost:3000/rsvp\n");
-  console.log("─────────────────────────────────────────────────\n");
-
-  const allInvitees = await prisma.invitee.findMany({
-    orderBy: { createdAt: "asc" },
-  });
-
-  console.log(`Total guests: ${allInvitees.length}\n`);
-
-  if (allInvitees.length > 0) {
-    const going = allInvitees.filter((i) => i.isAttending === true);
-    const notGoing = allInvitees.filter((i) => i.isAttending === false);
-    const pending = allInvitees.filter((i) => i.isAttending === null);
-
-    console.log(`  ✅ Going: ${going.length}`);
-    console.log(`  ❌ Not going: ${notGoing.length}`);
-    console.log(`  ⏳ Pending: ${pending.length}\n`);
-  }
+  console.log("\n✅ Seeding completed successfully!");
+  console.log(`📊 Total invitees: ${invitees.length}`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Error seeding database:", e);
     process.exit(1);
   })
   .finally(async () => {

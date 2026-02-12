@@ -8,13 +8,14 @@ datasource db {
 }
 
 model Invitee {
-  id          Int       @id @default(autoincrement())
-  name        String
-  token       String    @unique @default(uuid())
-  adultsCount Int       @default(0)
-  kidsCount   Int       @default(0)
-  isAttending Boolean?
-  message     String?
-  respondedAt DateTime?
-  createdAt   DateTime  @default(now())
+  id           Int       @id @default(autoincrement())
+  name         String
+  token        String    @unique @default(uuid())
+  adultsCount  Int       @default(0)
+  kidsCount    Int       @default(0)
+  maxKidsCount Int?
+  isAttending  Boolean?
+  message      String?
+  respondedAt  DateTime?
+  createdAt    DateTime  @default(now())
 }
