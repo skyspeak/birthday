@@ -10,12 +10,16 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient() {
   // Use Postgres in production (Vercel), SQLite locally
-  // Check for Postgres connection at runtime
-  const postgresUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+  const postgresUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL;
   
-  if (postgresUrl && postgresUrl.startsWith('postgres')) {
+  if (postgresUrl && (postgresUrl.includes('postgres://') || postgresUrl.includes('prisma+postgres://'))) {
     // Production: Vercel Postgres with adapter
-    const pool = new Pool({ connectionString: postgresUrl });
+    // Handle both regular postgres:// URLs and Prisma Accelerate URLs
+    const connectionString = postgresUrl.startsWith('prisma+') 
+      ? postgresUrl.replace('prisma+', '')  // Remove prisma+ prefix
+      : postgresUrl;
+    
+    const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
     return new PrismaClient({ adapter });
   } else {
