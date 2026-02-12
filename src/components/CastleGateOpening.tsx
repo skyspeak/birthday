@@ -176,7 +176,7 @@ export default function CastleGateOpening({ guestName, onComplete }: CastleGateO
                     🎉
                   </motion.div>
                   <h2 className="font-serif text-xl md:text-3xl font-bold text-charcoal mb-3">
-                    Welcome, {guestName}!
+                    {guestName === "Guest" ? "Welcome!" : `Welcome, ${guestName}!`}
                   </h2>
                   <p className="text-charcoal/70 text-sm md:text-base leading-relaxed">
                     to the{" "}
