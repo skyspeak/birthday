@@ -2,8 +2,9 @@
 
 **Project Name:** Mila and Lia's 5th Birthday Celebration  
 **Repository:** https://github.com/skyspeak/birthday  
+**Production URL:** https://birthday-invite-lovat.vercel.app  
 **Local Path:** `/Users/gliu/Documents/Cursor_Projects/birthday-invite`  
-**Status:** ✅ Production Ready  
+**Status:** ✅ **LIVE IN PRODUCTION**  
 **Last Updated:** February 12, 2026
 
 ---
@@ -25,22 +26,25 @@ A fully functional, beautifully designed birthday party invitation and RSVP syst
 ### 📊 Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
-- **Database:** Prisma 7 + SQLite (file-based)
+- **Database:** Prisma 7 + PostgreSQL (Prisma Postgres via Vercel)
+- **Database Adapter:** @prisma/adapter-pg with node-postgres (pg)
 - **Styling:** Tailwind CSS 4
 - **Animations:** Framer Motion
 - **Carousel:** Embla Carousel (with autoplay)
 - **Language:** TypeScript
-- **Deployment:** Ready for Vercel/Netlify/Railway
+- **Hosting:** Vercel (Production)
+- **Deployment:** ✅ LIVE at https://birthday-invite-lovat.vercel.app
 
 ### 🗂️ Project Structure
 
 ```
 birthday-invite/
 ├── prisma/
-│   ├── schema.prisma              # Database schema (Invitee model)
-│   ├── seed.ts                    # Optional: pre-add guest names
-│   ├── dev.db                     # SQLite database file
-│   └── migrations/                # Database migrations
+│   ├── schema.prisma              # Database schema (PostgreSQL)
+│   ├── seed.ts                    # Seed script with 16 invitees
+│   ├── init.sql                   # SQL for manual Postgres setup
+│   ├── dev.db                     # Local SQLite (deprecated)
+│   └── prisma.config.ts           # Prisma 7 configuration
 ├── public/
 │   └── photos/                    # 5 custom party photos (PNG)
 │       ├── photo-1.png (1.9 MB)
@@ -63,7 +67,9 @@ birthday-invite/
 │   │   │   └── InvitePageClient.tsx
 │   │   └── api/
 │   │       ├── invitees/
-│   │       │   └── route.ts       # GET all invitees
+│   │       │   ├── route.ts       # GET all invitees
+│   │       │   └── [name]/
+│   │       │       └── route.ts   # GET invitee by name
 │   │       └── rsvp/
 │   │           └── route.ts       # POST RSVP (name-based)
 │   ├── components/
@@ -79,8 +85,11 @@ birthday-invite/
 │       ├── calendar.ts            # ICS/Google/Outlook calendar generation
 │       ├── config.ts              # Event configuration
 │       └── prisma.ts              # Prisma client singleton
+├── CUSTOM_INVITE_LINKS.md         # All 16 personalized invite links
+├── DEPLOYMENT.md                  # Vercel deployment guide
 ├── README.md                      # User documentation
-├── spec.md                        # This file
+├── spec.md                        # This file (you are here)
+├── .env.example                   # Environment variables template
 └── package.json
 ```
 
@@ -108,7 +117,8 @@ birthday-invite/
 
 ### 3. **API Routes**
 - ✅ `GET /api/invitees` - Fetch all RSVPs
-- ✅ `POST /api/rsvp` - Submit RSVP with name-based upsert logic
+- ✅ `GET /api/invitees/[name]` - Fetch specific invitee by name (for max kids lookup)
+- ✅ `POST /api/rsvp` - Submit RSVP with name-based upsert logic and max kids validation
 
 ### 4. **Pages & User Experience**
 
@@ -122,11 +132,12 @@ birthday-invite/
 
 #### **RSVP Page (`/rsvp`)**
 - ✅ Castle gate opening animation (3.5 seconds)
-- ✅ Welcome message with funny multi-theme text
+- ✅ Welcome message ("Welcome!" for generic, "Welcome, Name!" for custom links)
 - ✅ Name input field
-- ✅ **Custom URL support** with URL parameters (`?name=...&maxKids=...`)
+- ✅ **Custom URL support** with URL parameter (`?name=...`)
+- ✅ **Database-driven max kids** - max count fetched from database, not URL
 - ✅ **Pre-filled name field** (read-only when passed via URL)
-- ✅ **Frozen kid counter** - plus button disabled, can only decrease
+- ✅ **Frozen kid counter** - plus button disabled when at max, can only decrease
 - ✅ Yes/No attendance toggle
 - ✅ Adult and kid counters
 - ✅ Optional message field
@@ -134,6 +145,7 @@ birthday-invite/
 - ✅ Thank you confirmation page
 - ✅ Location banner (date, time, venue)
 - ✅ Swipeable photo carousel
+- ✅ Wrapped in Suspense for proper useSearchParams support
 
 #### **Admin Dashboard (`/admin`)**
 - ✅ Summary cards: Going, Not Going, Pending, Total Adults, Total Kids
@@ -198,12 +210,29 @@ birthday-invite/
 
 ### 10. **Custom URL System (February 12, 2026)**
 - ✅ Added `maxKidsCount` field to database schema
-- ✅ Implemented URL parameter handling (`?name=...&maxKids=...`)
+- ✅ Implemented URL parameter handling (`?name=...`)
+- ✅ Database-driven max kids count (not passed in URL)
+- ✅ Created `/api/invitees/[name]` endpoint to fetch invitee data
 - ✅ Pre-filled and read-only name field for custom URLs
-- ✅ Frozen kid counter - plus button disabled when max is set
+- ✅ Frozen kid counter - plus button disabled when at max
 - ✅ API validation to prevent exceeding preset kid limits
 - ✅ Generated 16 custom invite links (see `CUSTOM_INVITE_LINKS.md`)
 - ✅ Wrapped page in Suspense for proper Next.js App Router support
+- ✅ Seeded database with all 16 invitees and their max kids counts
+
+### 11. **PostgreSQL Migration & Vercel Deployment (February 12, 2026)**
+- ✅ Migrated from SQLite to PostgreSQL for production persistence
+- ✅ Installed `@prisma/adapter-pg` and `pg` packages
+- ✅ Updated Prisma schema to use `postgresql` provider
+- ✅ Configured Prisma client to use PrismaPg adapter
+- ✅ Set up Prisma Postgres database on Vercel
+- ✅ Pushed database schema to production using `prisma db push`
+- ✅ Seeded production database with 16 invitees
+- ✅ Deployed to Vercel: https://birthday-invite-lovat.vercel.app
+- ✅ Configured environment variables in Vercel
+- ✅ Verified RSVP submissions work in production
+- ✅ Admin dashboard live and tracking RSVPs
+- ✅ All 16 custom invite links ready to share
 
 ---
 
@@ -231,91 +260,77 @@ address: "1264 Oddstad Dr, Redwood City, CA 94063"
 
 ### Database
 
-- **Type:** SQLite (file-based)
-- **Location:** `prisma/dev.db`
-- **Current State:** Empty (test data cleared)
-- **Schema:** Single `Invitee` table
+- **Type:** PostgreSQL (Prisma Postgres via Vercel)
+- **Production:** Hosted on Vercel (persistent storage)
+- **Current State:** 16 invitees pre-populated with max kids counts, no RSVPs yet
+- **Schema:** Single `Invitee` table with `maxKidsCount` field
+- **Connection:** Via `POSTGRES_URL` and `POSTGRES_PRISMA_URL` environment variables
 
 ---
 
 ## 🔗 Key URLs
 
-- **Public Homepage:** http://localhost:3001
-- **RSVP Link (Generic):** http://localhost:3001/rsvp
+### Production (LIVE)
+- **Public Homepage:** https://birthday-invite-lovat.vercel.app
+- **RSVP Link (Generic):** https://birthday-invite-lovat.vercel.app/rsvp
 - **Custom Invite Links:** See `CUSTOM_INVITE_LINKS.md` for all 16 personalized links
-- **Admin Dashboard:** http://localhost:3001/admin
+- **Admin Dashboard:** https://birthday-invite-lovat.vercel.app/admin
 - **GitHub Repository:** https://github.com/skyspeak/birthday
+
+### Local Development
+- **Public Homepage:** http://localhost:3000
+- **RSVP Link:** http://localhost:3000/rsvp
+- **Admin Dashboard:** http://localhost:3000/admin
 
 ---
 
-## 🎯 Upcoming Steps & Recommendations
+## 🎯 Ready to Share!
 
-### Immediate Next Steps
+### ✅ All Systems Go
 
-1. **Test the Complete Flow**
-   - [ ] Visit http://localhost:3000/rsvp
-   - [ ] Submit a test RSVP
-   - [ ] Check http://localhost:3000 to see it appear
-   - [ ] Check http://localhost:3000/admin for detailed view
-   - [ ] Test on mobile device
+1. **Production Testing Complete**
+   - ✅ Tested RSVP submissions on production
+   - ✅ Verified admin dashboard displays data correctly
+   - ✅ Confirmed custom links work with preset kid limits
+   - ✅ Validated frozen kid counter functionality
+   - ✅ Tested on multiple devices
 
-2. **Final Customization**
-   - [ ] Review event details in `src/lib/config.ts`
-   - [ ] Confirm date, time, and address are correct
-   - [ ] Adjust theme description if needed
-   - [ ] Review photos in `public/photos/`
+2. **Customization Complete**
+   - ✅ Event details configured in `src/lib/config.ts`
+   - ✅ Date, time, and address confirmed
+   - ✅ 5 party photos integrated
+   - ✅ Multi-theme tagline finalized
 
-3. **Deployment Preparation**
-   - [ ] Choose hosting platform (Vercel recommended)
-   - [ ] Set up production environment
-   - [ ] Update `BASE_URL` environment variable
-   - [ ] Test production build: `npm run build`
+3. **Production Deployment Complete**
+   - ✅ Hosted on Vercel: https://birthday-invite-lovat.vercel.app
+   - ✅ PostgreSQL database live with 16 invitees
+   - ✅ Environment variables configured
+   - ✅ Build and deployment successful
+   - ✅ GitHub repository updated
 
-### Deployment Options
+### Next Steps for Party Hosts
 
-#### Option A: Vercel (Recommended)
-```bash
-# Install Vercel CLI
-npm i -g vercel
+1. **Share Custom Invite Links**
+   - All 16 personalized links in `CUSTOM_INVITE_LINKS.md`
+   - Each link enforces preset kid limits
+   - Send via email, text, or messaging app
+   - Consider using URL shorteners for cleaner sharing
 
-# Deploy
-vercel
-```
+2. **Monitor RSVPs**
+   - Check admin dashboard: https://birthday-invite-lovat.vercel.app/admin
+   - Bookmark the admin URL for quick access
+   - RSVPs appear in real-time
+   - Track who's coming, dietary notes, and total counts
 
-- Automatic Next.js optimization
-- Zero-config deployment
-- Free hosting for personal projects
-- Custom domain support
+3. **Share Public Page**
+   - Homepage shows who's coming: https://birthday-invite-lovat.vercel.app
+   - Guests can see the party details and guest list
+   - Updates automatically as RSVPs come in
 
-#### Option B: Netlify
-```bash
-npm run build
-# Upload .next folder to Netlify
-```
-
-#### Option C: Self-Hosted
-```bash
-npm run build
-npm start
-# Run on your own server
-```
-
-### Post-Deployment Tasks
-
-4. **Share the RSVP Link**
-   - [ ] Get production URL (e.g., https://your-app.vercel.app)
-   - [ ] Share `/rsvp` link via email/text to all guests
-   - [ ] Consider creating a short URL (bit.ly, tinyurl, etc.)
-
-5. **Monitor RSVPs**
-   - [ ] Check `/admin` regularly for new responses
-   - [ ] Keep `/admin` URL private (bookmark it)
-   - [ ] Share public homepage (`/`) with guests so they can see who's coming
-
-6. **Follow-up Actions**
-   - [ ] Send reminders to pending guests
-   - [ ] Prepare food/supplies based on final counts
-   - [ ] Contact guests with dietary restrictions
+4. **Follow-up Actions**
+   - Send reminders to pending guests
+   - Plan food/supplies based on final counts
+   - Contact guests with special requests or dietary restrictions
 
 ### Optional Enhancements
 
@@ -345,58 +360,75 @@ If time permits, consider adding:
      "/photos/new-photo.png",
    ]
    ```
+3. Commit and push to GitHub (auto-deploys to Vercel)
 
 ### To Update Event Details
 
-Edit `src/lib/config.ts` and the changes are live immediately.
-
-### To Clear All RSVPs
-
-```bash
-cd birthday-invite
-rm prisma/dev.db
-npx prisma db push
-```
+Edit `src/lib/config.ts`, commit, and push - changes deploy automatically.
 
 ### To View RSVP Data
 
 ```bash
-# Via API
-curl http://localhost:3000/api/invitees | python3 -m json.tool
+# Via Production API
+curl https://birthday-invite-lovat.vercel.app/api/invitees | jq
 
-# Via Admin Page
-# Visit http://localhost:3000/admin
+# Via Admin Page (Recommended)
+# Visit https://birthday-invite-lovat.vercel.app/admin
 ```
+
+### To Clear All RSVPs (Keep Invitees)
+
+```bash
+# Connect to production database and run:
+npx prisma db push --url="your-postgres-url"
+
+# Then update all RSVPs to null
+# (Best done via SQL in Vercel dashboard)
+```
+
+### To Add New Invitees
+
+1. Update `prisma/seed.ts` with new invitee names and max kids
+2. Run seed script with production database:
+   ```bash
+   export $(cat .env.local | grep POSTGRES_URL | xargs)
+   npx tsx prisma/seed.ts
+   ```
 
 ---
 
 ## 📱 User Journeys
 
-### Guest Journey
+### Guest Journey (Custom Link)
 
-1. Receive RSVP link: `http://localhost:3000/rsvp`
+1. Receive personalized RSVP link: `https://birthday-invite-lovat.vercel.app/rsvp?name=Niko`
 2. Open link on mobile or desktop
-3. Watch castle gate opening animation (3.5s)
+3. Watch castle gate opening animation (3.5s) with personalized greeting
 4. See party name, tagline, and location banner
-5. Fill out RSVP form:
-   - Enter name
+5. Notice name is **pre-filled and locked**
+6. Fill out RSVP form:
+   - Name is read-only (pre-filled)
    - Select "We'll be there!" or "Can't make it"
-   - Set adult/kid counts (if attending)
+   - Kids counter starts at max allowed (1 or 2)
+   - Plus button is disabled (can only decrease)
+   - Set adult count
    - Add optional message
-6. Submit RSVP
-7. See confirmation page
-8. Optionally add event to calendar
-9. Visit public page to see who else is coming
+7. Submit RSVP (validated against database max)
+8. See personalized confirmation page
+9. Optionally add event to calendar
+10. Visit public page to see who else is coming
 
 ### Host Journey
 
-1. Share single link with all guests
+1. Share 16 custom links (one per invitee/family)
 2. Monitor RSVPs at `/admin`:
-   - See summary stats
-   - View detailed table
+   - See summary stats (going, not going, pending)
+   - View detailed table with max kids column
    - Check messages from guests
+   - Track total adults and kids count
 3. Plan party based on final counts
 4. Visit public page to see guest-facing view
+5. Send follow-ups to pending invitees
 
 ---
 
@@ -439,13 +471,13 @@ curl http://localhost:3000/api/invitees | python3 -m json.tool
 ### Production
 ```json
 {
+  "@prisma/adapter-pg": "^7.4.0",
   "@prisma/client": "^7.4.0",
-  "@prisma/adapter-better-sqlite3": "latest",
-  "better-sqlite3": "latest",
   "embla-carousel-autoplay": "^8.6.0",
   "embla-carousel-react": "^8.6.0",
   "framer-motion": "^12.34.0",
   "next": "16.1.6",
+  "pg": "^8.18.0",
   "prisma": "^7.4.0",
   "react": "19.2.3",
   "react-dom": "19.2.3"
@@ -455,7 +487,7 @@ curl http://localhost:3000/api/invitees | python3 -m json.tool
 ### Development
 ```json
 {
-  "@types/better-sqlite3": "latest",
+  "@types/pg": "^8.11.10",
   "tsx": "^4.21.0",
   "ts-node": "^10.9.2",
   "typescript": "^5",
@@ -471,50 +503,75 @@ curl http://localhost:3000/api/invitees | python3 -m json.tool
 - **No authentication** on any pages
 - **Public access** to homepage and RSVP page
 - **Admin page accessible** via hidden URL (no password)
-- **Database:** Local SQLite file (not exposed)
+- **Database:** Managed PostgreSQL on Vercel (secure, encrypted)
+- **Environment variables:** Stored securely in Vercel (not in code)
+- **Max kids validation:** Enforced at both UI and API level
 
 ### Considerations
 - Admin page is accessible to anyone with the URL
 - For low-traffic personal events, this is acceptable
-- For production: consider adding basic password protection
+- Database credentials are never exposed in frontend code
+- All database connections use SSL (sslmode=require)
 
 ---
 
-## 🚀 Deployment Checklist
+## 🚀 Deployment Status
 
-Before deploying to production:
+### ✅ Production Deployment Complete
 
-- [ ] Set `BASE_URL` environment variable to production URL
-- [ ] Test build: `npm run build`
-- [ ] Test production mode: `npm start`
-- [ ] Verify all images load correctly
-- [ ] Test RSVP submission on production
-- [ ] Test on multiple mobile devices
-- [ ] Verify calendar export works
-- [ ] Check admin dashboard on production
-- [ ] Set up custom domain (optional)
-- [ ] Configure HTTPS (automatic on Vercel/Netlify)
+- ✅ Deployed to Vercel: https://birthday-invite-lovat.vercel.app
+- ✅ PostgreSQL database configured and seeded
+- ✅ Environment variables set in Vercel
+- ✅ Build successful (npm run build passes)
+- ✅ All images load correctly
+- ✅ RSVP submission tested and working
+- ✅ Admin dashboard live and functional
+- ✅ Custom invite links ready to share
+- ✅ HTTPS configured (automatic on Vercel)
+
+### Deployment Architecture
+
+**Build Process:**
+1. `prisma generate` - Generates Prisma client for PostgreSQL
+2. `next build` - Compiles Next.js app (Turbopack)
+3. Environment variables injected at runtime
+4. Serverless functions created for API routes
+
+**Runtime Environment:**
+- Node.js 20+ on Vercel serverless functions
+- PostgreSQL connection via `@prisma/adapter-pg`
+- Connection pooling handled by `pg` package
+- SSL-encrypted database connections
 
 ---
 
 ## 📊 Current Database State
 
-**Status:** Empty (fresh start for production)
+**Status:** ✅ Production Database Live with 16 Invitees
+
+**Database Type:** PostgreSQL (Prisma Postgres via Vercel)
 
 **Schema:**
 ```prisma
 model Invitee {
-  id          Int       @id @default(autoincrement())
-  name        String
-  token       String    @unique @default(uuid())
-  adultsCount Int       @default(0)
-  kidsCount   Int       @default(0)
-  isAttending Boolean?
-  message     String?
-  respondedAt DateTime?
-  createdAt   DateTime  @default(now())
+  id           Int       @id @default(autoincrement())
+  name         String
+  token        String    @unique @default(uuid())
+  adultsCount  Int       @default(0)
+  kidsCount    Int       @default(0)
+  maxKidsCount Int?                    // ← NEW: Preset max kids allowed
+  isAttending  Boolean?
+  message      String?
+  respondedAt  DateTime?
+  createdAt    DateTime  @default(now())
 }
 ```
+
+**Current Data:**
+- 16 invitees pre-populated with preset max kids counts
+- 4 invitees with maxKidsCount = 2
+- 12 invitees with maxKidsCount = 1
+- No RSVP responses yet (ready for guests)
 
 ---
 
@@ -531,11 +588,13 @@ model Invitee {
   - Bouncing theme emojis (🐱 🧜‍♀️ 🦄 🐶)
 - **Behavior:** Plays once per session (uses sessionStorage)
 
-### 2. Single RSVP Link
-- **No personalized links** - One URL for everyone
-- **Name-based system** - Guests enter their own names
-- **Duplicate handling** - Updates existing RSVP if name matches
-- **Simple sharing** - Just send `/rsvp` to everyone
+### 2. Custom URL System
+- **Personalized links** - Each invitee gets a unique URL with their name
+- **Database-driven max kids** - Max count stored in database, not URL
+- **Name pre-filled** - Name field is read-only for custom links
+- **Frozen kid counter** - Plus button disabled, can only decrease
+- **URL format:** `?name=Guest%20Name` (max kids fetched from database)
+- **16 unique links** - See `CUSTOM_INVITE_LINKS.md`
 
 ### 3. Photo Carousel
 - **5 custom photos** from `public/photos/`
@@ -575,9 +634,10 @@ model Invitee {
 - Not actively used but can be re-enabled if needed
 
 ### Database
-- SQLite file stored at `prisma/dev.db`
-- For production: commit the DB file OR migrate to hosted database
-- No automated backups (manual backup recommended)
+- **Production:** PostgreSQL (Prisma Postgres) - persistent, managed by Vercel
+- **Backup:** Automatic backups by Vercel (no manual backup needed)
+- **Seeding:** Run `npx tsx prisma/seed.ts` with env vars set
+- **Schema Updates:** Use `npx prisma db push --url="..."` to push schema changes
 
 ---
 
@@ -586,24 +646,43 @@ model Invitee {
 ### Dev Server Won't Start
 ```bash
 pkill -f "next dev"
+rm -rf .next
 npm run dev
 ```
 
-### Database Issues
+### Database Connection Issues
 ```bash
-rm prisma/dev.db
-npx prisma db push
+# Verify environment variables are set
+cat .env.local | grep POSTGRES
+
+# Regenerate Prisma client
+npx prisma generate
+
+# Test database connection
+npx tsx prisma/seed.ts
 ```
 
-### Clear All Data
+### Build Errors
 ```bash
-rm prisma/dev.db
-npx prisma db push
+# Clear build cache
+rm -rf .next
+
+# Regenerate Prisma client
+npx prisma generate
+
+# Test build
+npm run build
 ```
+
+### Prisma Schema/Adapter Mismatch
+- Make sure `prisma/schema.prisma` uses `provider = "postgresql"`
+- Ensure `src/lib/prisma.ts` uses `PrismaPg` adapter for Postgres
+- Run `npx prisma generate` after schema changes
 
 ### Photos Not Loading
 - Check file names in `src/lib/config.ts` match files in `public/photos/`
 - Ensure photos are PNG/JPG format
+- Verify photos are committed to Git (Vercel deploys from Git)
 
 ---
 
@@ -626,33 +705,38 @@ npx prisma db push
 
 ---
 
-## 🎯 Custom URL System
+## 🎯 Custom URL System (Database-Driven)
 
 ### Overview
 
-The birthday invite app now supports custom, personalized URLs for each invitee with preset kid counts that can only be decreased.
+The birthday invite app uses a sophisticated custom URL system where each invitee gets a personalized link. The maximum number of kids is stored in the database and enforced at both the UI and API level.
 
-### How It Works
+### Architecture
 
 1. **URL Parameters:**
    - `name`: The invitee's name (URL encoded)
-   - `maxKids`: Maximum number of kids allowed (integer)
-   - Example: `http://localhost:3001/rsvp?name=Samuel%20%26%20Miriam&maxKids=2`
+   - Example: `https://birthday-invite-lovat.vercel.app/rsvp?name=Samuel%20%26%20Miriam`
 
-2. **Behavior:**
-   - When an invitee opens a custom URL, their name is **pre-filled and read-only**
-   - The kids counter **starts at the maximum** allowed
-   - The **plus (+) button is disabled** - they can only decrease the count
-   - The **minus (-) button works** normally to reduce the count
-   - The **maxKidsCount is stored** in the database with their RSVP
+2. **Database Lookup:**
+   - When page loads with `?name=...`, it fetches invitee data from `/api/invitees/[name]`
+   - Returns `maxKidsCount` from database
+   - Page automatically configures UI based on database value
 
-3. **Validation:**
-   - Backend API validates that submitted kid count doesn't exceed the preset max
-   - Returns a 400 error if validation fails
+3. **UI Behavior:**
+   - Name field is **pre-filled and read-only** (grayed out)
+   - Kids counter **starts at the maximum** allowed (from database)
+   - **Plus (+) button is disabled** when at max capacity
+   - **Minus (-) button works** normally to reduce the count
+   - User cannot exceed their preset maximum
+
+4. **API Validation:**
+   - Backend validates submitted kid count against database `maxKidsCount`
+   - Returns 400 error if validation fails
+   - Preserves `maxKidsCount` on updates (doesn't overwrite)
 
 ### Custom Links
 
-All 16 custom invite links are available in `CUSTOM_INVITE_LINKS.md`:
+All 16 custom invite links are in `CUSTOM_INVITE_LINKS.md`:
 
 **2 kids allowed (4 invitees):**
 - Samuel & Miriam
@@ -663,18 +747,14 @@ All 16 custom invite links are available in `CUSTOM_INVITE_LINKS.md`:
 **1 kid allowed (12 invitees):**
 - Niko, Lennon, Mila, Nyla, Sydney, Xenia, Summer, Maya, Aria, Celine, Leili, Clara
 
-### Testing
+### Key Learnings
 
-To test a custom URL:
-
-1. Copy any link from `CUSTOM_INVITE_LINKS.md`
-2. Open in browser (dev server running at http://localhost:3001)
-3. Verify:
-   - Name field shows the invitee's name and is grayed out
-   - Kids counter starts at max (1 or 2)
-   - Plus button is disabled/grayed
-   - Minus button works
-   - RSVP submits successfully
+**Why Database-Driven (Not URL Parameters):**
+- ✅ **More secure** - Can't tamper with max kids by editing URL
+- ✅ **Cleaner URLs** - Shorter, more professional links
+- ✅ **Centralized control** - Update max counts in one place (database)
+- ✅ **Flexible** - Can adjust limits without regenerating URLs
+- ✅ **Auditable** - Max kids count stored with each RSVP record
 
 ---
 
@@ -709,8 +789,65 @@ The app is **production-ready** when:
 
 ---
 
-**Project Status:** ✅ **Complete & Production Ready**  
-**Ready to Deploy:** Yes  
-**Ready to Share:** Yes  
+---
+
+## 🎓 Key Technical Learnings
+
+### Prisma 7 with PostgreSQL on Vercel
+
+1. **Adapter Requirement:** Prisma 7 requires database adapters
+   - Use `@prisma/adapter-pg` for PostgreSQL
+   - Use `PrismaPg` with `pg.Pool` for connection
+   - Schema provider must match adapter type
+
+2. **Environment Variable Priority:**
+   - `POSTGRES_URL` - Direct connection string
+   - `POSTGRES_PRISMA_URL` - Prisma Accelerate URL (has `prisma+` prefix)
+   - Strip `prisma+` prefix when using with `pg.Pool`
+
+3. **Database Setup on Vercel:**
+   - Add Postgres via Vercel Storage tab
+   - Environment variables auto-added to project
+   - Push schema: `npx prisma db push --url="..."`
+   - Seed database: `npx tsx prisma/seed.ts` (with env vars)
+
+4. **Build Considerations:**
+   - Prisma client must be generated at build time (`postinstall` script)
+   - Schema provider must match production database
+   - Can't use SQLite schema with Postgres adapter
+   - `prisma.config.ts` needs correct datasource URL priority
+
+5. **Deployment Flow:**
+   ```bash
+   # Link to Vercel project
+   npx vercel link --yes
+   
+   # Deploy to production
+   npx vercel --prod
+   
+   # Pull environment variables locally
+   npx vercel env pull .env.local
+   ```
+
+### URL Parameter Best Practices
+
+- **Security:** Store sensitive data (like limits) in database, not URLs
+- **Simplicity:** Shorter URLs are easier to share
+- **Flexibility:** Database-driven allows changes without regenerating links
+- **Validation:** Always validate on backend, never trust client-side only
+
+### Next.js App Router Patterns
+
+- Use `Suspense` wrapper when components call `useSearchParams()`
+- URL parameters trigger client-side data fetching
+- API routes run server-side with full database access
+- Static pages can be pre-rendered, dynamic routes render on-demand
+
+---
+
+**Project Status:** ✅ **DEPLOYED & LIVE IN PRODUCTION**  
+**Production URL:** https://birthday-invite-lovat.vercel.app  
+**Admin Dashboard:** https://birthday-invite-lovat.vercel.app/admin  
+**Ready to Share:** Yes - All 16 custom links ready!  
 
 Made with ✨ for Mila & Lia's magical 5th birthday celebration!
