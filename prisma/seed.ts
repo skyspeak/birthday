@@ -1,11 +1,21 @@
 import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import path from "path";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
-const dbPath = path.join(process.cwd(), "prisma", "dev.db");
-const adapter = new PrismaBetterSqlite3({
-  url: `file:${dbPath}`,
-});
+// Use Postgres URL from environment
+const postgresUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+
+if (!postgresUrl) {
+  throw new Error("Database connection string not found. Please set POSTGRES_URL in .env.local");
+}
+
+// Remove prisma+ prefix if present (for Accelerate URLs)
+const connectionString = postgresUrl.startsWith('prisma+') 
+  ? postgresUrl.replace('prisma+', '') 
+  : postgresUrl;
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
