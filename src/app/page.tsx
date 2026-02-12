@@ -1,65 +1,109 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { motion } from "framer-motion";
+import { eventConfig } from "@/lib/config";
+import Carousel from "@/components/Carousel";
+import EventDetails from "@/components/EventDetails";
+import GuestList from "@/components/GuestList";
+import WaveDivider from "@/components/WaveDivider";
+
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative pt-12 md:pt-16 pb-6 md:pb-8 px-4 text-center overflow-hidden">
+        {/* Decorative floating elements - hidden on small mobile */}
+        <div className="hidden sm:block absolute top-20 left-[10%] text-3xl md:text-4xl opacity-30 animate-float select-none pointer-events-none">
+          🧜‍♀️
+        </div>
+        <div className="hidden sm:block absolute top-32 right-[12%] text-2xl md:text-3xl opacity-25 animate-float-delay select-none pointer-events-none">
+          🦄
+        </div>
+        <div className="hidden md:block absolute bottom-20 left-[20%] text-2xl opacity-20 animate-float-delay select-none pointer-events-none">
+          🐚
+        </div>
+        <div className="hidden md:block absolute bottom-10 right-[18%] text-2xl opacity-20 animate-float select-none pointer-events-none">
+          ✨
+        </div>
+
+        {/* Party name */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <p className="text-xs md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] text-lavender/80 mb-2 md:mb-3 font-medium">
+            You&apos;re Invited
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl font-bold text-shimmer mb-3 md:mb-4 px-4">
+            {eventConfig.partyName}
+          </h1>
+          <p className="text-charcoal/60 text-base md:text-lg lg:text-xl max-w-xl mx-auto px-4 whitespace-pre-line">
+            {eventConfig.tagline}
+          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-6"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <a
+              href="/rsvp"
+              className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-r from-lavender to-seafoam text-white font-semibold hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+            >
+              RSVP Now
+            </a>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Photo Carousel */}
+      <section className="py-6 md:py-8 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <Carousel photos={eventConfig.photos} />
+        </motion.div>
+      </section>
+
+      <WaveDivider />
+
+      {/* Event Details */}
+      <section className="py-10 md:py-12 px-4">
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="font-serif text-3xl md:text-4xl text-charcoal text-center mb-6 md:mb-8"
+        >
+          The Details
+        </motion.h2>
+        <EventDetails />
+      </section>
+
+      <WaveDivider flip />
+
+      {/* Guest List */}
+      <section className="py-10 md:py-12 px-4 pb-16">
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="font-serif text-3xl md:text-4xl text-charcoal text-center mb-6 md:mb-8"
+        >
+          Who&apos;s Coming
+        </motion.h2>
+        <GuestList />
+      </section>
+
+      {/* Footer */}
+      <footer className="py-6 md:py-8 text-center px-4">
+        <p className="text-charcoal/30 text-xs md:text-sm">
+          Made with ✨ for {eventConfig.childName}&apos;s magical day
+        </p>
+      </footer>
+    </main>
   );
 }
