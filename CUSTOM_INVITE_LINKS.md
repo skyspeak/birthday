@@ -15,93 +15,91 @@ Each link is personalized with the invitee's name. The maximum number of kids al
 
 ### Samuel & Miriam (2 kids max)
 ```
-http://localhost:3000/rsvp?name=Samuel%20%26%20Miriam
+https://birthday-invite-lovat.vercel.app/rsvp?name=Samuel%20%26%20Miriam
 ```
 
 ### Khai and Liem (2 kids max)
 ```
-http://localhost:3000/rsvp?name=Khai%20and%20Liem
+https://birthday-invite-lovat.vercel.app/rsvp?name=Khai%20and%20Liem
 ```
 
 ### Adam & Kelley (2 kids max)
 ```
-http://localhost:3000/rsvp?name=Adam%20%26%20Kelley
+https://birthday-invite-lovat.vercel.app/rsvp?name=Adam%20%26%20Kelley
 ```
 
 ### Cody & Annie (2 kids max)
 ```
-http://localhost:3000/rsvp?name=Cody%20%26%20Annie
+https://birthday-invite-lovat.vercel.app/rsvp?name=Cody%20%26%20Annie
 ```
 
 ### Niko (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Niko
+https://birthday-invite-lovat.vercel.app/rsvp?name=Niko
 ```
 
 ### Lennon (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Lennon
+https://birthday-invite-lovat.vercel.app/rsvp?name=Lennon
 ```
 
 ### Mila (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Mila
+https://birthday-invite-lovat.vercel.app/rsvp?name=Mila
 ```
 
 ### Nyla (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Nyla
+https://birthday-invite-lovat.vercel.app/rsvp?name=Nyla
 ```
 
 ### Sydney (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Sydney
+https://birthday-invite-lovat.vercel.app/rsvp?name=Sydney
 ```
 
 ### Xenia (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Xenia
+https://birthday-invite-lovat.vercel.app/rsvp?name=Xenia
 ```
 
 ### Summer (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Summer
+https://birthday-invite-lovat.vercel.app/rsvp?name=Summer
 ```
 
 ### Maya (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Maya
+https://birthday-invite-lovat.vercel.app/rsvp?name=Maya
 ```
 
 ### Aria (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Aria
+https://birthday-invite-lovat.vercel.app/rsvp?name=Aria
 ```
 
 ### Celine (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Celine
+https://birthday-invite-lovat.vercel.app/rsvp?name=Celine
 ```
 
 ### Leili (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Leili
+https://birthday-invite-lovat.vercel.app/rsvp?name=Leili
 ```
 
 ### Clara (1 kid max)
 ```
-http://localhost:3000/rsvp?name=Clara
+https://birthday-invite-lovat.vercel.app/rsvp?name=Clara
 ```
 
 ---
 
-## For Production Deployment
+## Production Deployment
 
-When you deploy to production, replace `http://localhost:3000` with your production URL. For example:
+Your app is live at: **https://birthday-invite-lovat.vercel.app**
 
-```
-https://your-app.vercel.app/rsvp?name=Samuel%20%26%20Miriam
-```
+All links above are production-ready and can be shared immediately!
 
 ## Testing
 
