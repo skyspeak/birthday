@@ -17,6 +17,7 @@ interface Invitee {
 export default function AdminPage() {
   const [invitees, setInvitees] = useState<Invitee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/invitees")
@@ -27,6 +28,35 @@ export default function AdminPage() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  const handleDelete = async (id: number, name: string) => {
+    if (!confirm(`Are you sure you want to delete ${name}'s invite?`)) {
+      return;
+    }
+
+    setDeletingId(id);
+    try {
+      const response = await fetch("/api/invitees", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete invitee");
+      }
+
+      // Remove from local state
+      setInvitees((prev) => prev.filter((invitee) => invitee.id !== id));
+    } catch (error) {
+      console.error("Error deleting invitee:", error);
+      alert("Failed to delete invitee. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const going = invitees.filter((i) => i.isAttending === true);
   const notGoing = invitees.filter((i) => i.isAttending === false);
@@ -150,6 +180,9 @@ export default function AdminPage() {
                     <th className="px-4 md:px-6 py-3 text-center text-xs font-semibold text-charcoal/70 uppercase tracking-wider hidden lg:table-cell">
                       Responded
                     </th>
+                    <th className="px-4 md:px-6 py-3 text-center text-xs font-semibold text-charcoal/70 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-lavender/10">
@@ -201,6 +234,32 @@ export default function AdminPage() {
                               minute: "2-digit",
                             })
                           : "—"}
+                      </td>
+                      <td className="px-4 md:px-6 py-4 text-center">
+                        <button
+                          onClick={() => handleDelete(invitee.id, invitee.name)}
+                          disabled={deletingId === invitee.id}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose/10 text-rose hover:bg-rose/20 hover:text-rose transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete invitee"
+                        >
+                          {deletingId === invitee.id ? (
+                            <div className="w-4 h-4 border-2 border-rose/30 border-t-rose rounded-full animate-spin" />
+                          ) : (
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                              />
+                            </svg>
+                          )}
+                        </button>
                       </td>
                     </motion.tr>
                   ))}

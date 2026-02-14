@@ -25,3 +25,44 @@ export async function GET() {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+
+    if (!id || typeof id !== "number") {
+      return NextResponse.json(
+        { error: "Valid invitee ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Check if invitee exists
+    const invitee = await prisma.invitee.findUnique({
+      where: { id },
+    });
+
+    if (!invitee) {
+      return NextResponse.json(
+        { error: "Invitee not found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete the invitee
+    await prisma.invitee.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ 
+      success: true,
+      message: `${invitee.name} has been deleted` 
+    });
+  } catch (error) {
+    console.error("Failed to delete invitee:", error);
+    return NextResponse.json(
+      { error: "Failed to delete invitee" },
+      { status: 500 }
+    );
+  }
+}
