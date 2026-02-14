@@ -33,6 +33,13 @@ export default function GuestList() {
   const totalAdults = going.reduce((sum, i) => sum + i.adultsCount, 0);
   const totalKids = going.reduce((sum, i) => sum + i.kidsCount, 0);
 
+  // Random emoji selector
+  const getRandomEmoji = (id: number) => {
+    const emojis = ['🐱', '🐶', '🧜‍♀️', '🦄'];
+    // Use guest ID as seed for consistency across renders
+    return emojis[id % emojis.length];
+  };
+
   if (loading) {
     return (
       <div className="w-full max-w-2xl mx-auto text-center py-12">
@@ -90,7 +97,7 @@ export default function GuestList() {
                     </p>
                   </div>
                   <span className="text-xl md:text-2xl flex-shrink-0" aria-hidden>
-                    🧜‍♀️
+                    {getRandomEmoji(invitee.id)}
                   </span>
                 </div>
                 
