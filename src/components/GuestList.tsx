@@ -70,27 +70,63 @@ export default function GuestList() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="bg-white/70 backdrop-blur-sm rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 shadow-soft border border-seafoam/15 flex items-center justify-between"
+                className="bg-white/70 backdrop-blur-sm rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 shadow-soft border border-seafoam/15"
               >
-                <div>
-                  <p className="font-medium text-charcoal text-sm md:text-base break-words">
-                    {invitee.name}
-                  </p>
-                  <p className="text-charcoal/50 text-xs md:text-sm">
-                    {invitee.adultsCount}{" "}
-                    {invitee.adultsCount === 1 ? "adult" : "adults"}
-                    {invitee.kidsCount > 0 && (
-                      <>
-                        {" "}
-                        &middot; {invitee.kidsCount}{" "}
-                        {invitee.kidsCount === 1 ? "kid" : "kids"}
-                      </>
-                    )}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-charcoal text-sm md:text-base break-words">
+                      {invitee.name}
+                    </p>
+                    <p className="text-charcoal/50 text-xs md:text-sm">
+                      {invitee.adultsCount}{" "}
+                      {invitee.adultsCount === 1 ? "adult" : "adults"}
+                      {invitee.kidsCount > 0 && (
+                        <>
+                          {" "}
+                          &middot; {invitee.kidsCount}{" "}
+                          {invitee.kidsCount === 1 ? "kid" : "kids"}
+                        </>
+                      )}
+                    </p>
+                  </div>
+                  <span className="text-xl md:text-2xl flex-shrink-0" aria-hidden>
+                    🧜‍♀️
+                  </span>
                 </div>
-                <span className="text-xl md:text-2xl flex-shrink-0" aria-hidden>
-                  🧜‍♀️
-                </span>
+                
+                {/* Message with sparkles */}
+                {invitee.message && (
+                  <div className="mt-3 pt-3 border-t border-seafoam/10 relative">
+                    {/* Sparkle particles */}
+                    {[...Array(5)].map((_, i) => (
+                      <motion.span
+                        key={i}
+                        className="absolute text-xs pointer-events-none select-none"
+                        style={{
+                          left: `${15 + i * 20}%`,
+                          top: '-8px',
+                        }}
+                        initial={{ opacity: 0, scale: 0, y: 0 }}
+                        animate={{
+                          opacity: [0, 1, 1, 0],
+                          scale: [0, 1, 1, 0],
+                          y: [0, -10, -15, -20],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.2,
+                          ease: "easeOut",
+                        }}
+                      >
+                        ✨
+                      </motion.span>
+                    ))}
+                    <p className="text-charcoal/60 text-xs md:text-sm italic">
+                      &quot;{invitee.message}&quot;
+                    </p>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
