@@ -368,10 +368,10 @@ function RSVPContent() {
                             {kidsCount}
                           </span>
                           <button
-                            onClick={() => setKidsCount(Math.min(maxKidsCount ?? 10, kidsCount + 1))}
-                            disabled={maxKidsCount !== null && kidsCount >= maxKidsCount}
+                            onClick={() => setKidsCount(Math.min(maxKidsCount ?? 2, kidsCount + 1))}
+                            disabled={(maxKidsCount !== null && kidsCount >= maxKidsCount) || (maxKidsCount === null && kidsCount >= 2)}
                             className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center transition-all text-lg md:text-xl touch-manipulation ${
-                              maxKidsCount !== null && kidsCount >= maxKidsCount
+                              ((maxKidsCount !== null && kidsCount >= maxKidsCount) || (maxKidsCount === null && kidsCount >= 2))
                                 ? "bg-gray-100 text-gray-300 cursor-not-allowed"
                                 : "bg-seafoam/10 text-seafoam hover:bg-seafoam/20 active:scale-90"
                             }`}
