@@ -8,6 +8,8 @@ import Carousel from "@/components/Carousel";
 import WaveDivider from "@/components/WaveDivider";
 import LocationBanner from "@/components/LocationBanner";
 import CastleGateOpening from "@/components/CastleGateOpening";
+import AddToCalendar from "@/components/AddToCalendar";
+import confetti from "canvas-confetti";
 
 function RSVPContent() {
   const searchParams = useSearchParams();
@@ -50,6 +52,44 @@ function RSVPContent() {
         });
     }
   }, [searchParams]);
+
+  // Trigger confetti when confirmation page shows
+  useEffect(() => {
+    if (submitted && showContent && isAttending) {
+      // Fire confetti multiple times for a celebration effect
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+      function randomInRange(min: number, max: number) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        // Launch from two sides
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        });
+      }, 250);
+
+      return () => clearInterval(interval);
+    }
+  }, [submitted, showContent, isAttending]);
 
   const handleSubmit = async () => {
     if (!guestName.trim()) {
@@ -146,7 +186,20 @@ function RSVPContent() {
                     )}
                   </>
                 )}
-                <div className="mt-8">
+                
+                {/* Add to Calendar button - only show if attending */}
+                {isAttending && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                    className="mt-6"
+                  >
+                    <AddToCalendar />
+                  </motion.div>
+                )}
+
+                <div className="mt-6">
                   <a
                     href="/"
                     className="inline-block px-8 py-3 rounded-2xl bg-gradient-to-r from-lavender to-seafoam text-white font-medium hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
