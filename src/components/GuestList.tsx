@@ -96,8 +96,13 @@ export default function GuestList() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-charcoal/40 px-4 mb-6">
-          <p className="text-sm md:text-base">No confirmed guests yet. Be the first to RSVP!</p>
+        <div className="text-center py-8 px-4 mb-6">
+          <div className="text-5xl md:text-6xl mb-4 animate-float">
+            🦄✨
+          </div>
+          <p className="text-charcoal/60 text-base md:text-lg font-serif italic">
+            The magical guest list awaits its first enchanted name...
+          </p>
         </div>
       )}
 
