@@ -19,7 +19,10 @@ export async function GET(
     
     const invitee = await prisma.invitee.findFirst({
       where: {
-        name: decodedName.trim(),
+        name: {
+          equals: decodedName.trim(),
+          mode: 'insensitive',
+        },
       },
     });
 

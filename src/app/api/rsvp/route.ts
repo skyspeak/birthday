@@ -20,10 +20,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if guest already exists
+    // Check if guest already exists (case-insensitive)
     const existing = await prisma.invitee.findFirst({
       where: { 
-        name: name.trim()
+        name: {
+          equals: name.trim(),
+          mode: 'insensitive',
+        },
       },
     });
 
